@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Sentiment Analysis</h1>
+    <form id="sentimentForm">
+        <input type="text" name="text" placeholder="Write your sentence here..." required>
+        <button type="submit">Analyze</button>
+    </form>
+    <div id="loading" class="hidden">Loading...</div>
+    <div id="results" class="hidden"></div>
+</div>
+
+<script>
+    document.getElementById("sentimentForm").onsubmit = async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        document.getElementById("loading").classList.remove("hidden");
+        document.getElementById("results").classList.add("hidden");
+
+        const response = await fetch("/predict", {
+            method: "POST",
+            body: formData
+        });
+        const result = await response.json();
+
+        document.getElementById("loading").classList.add("hidden");
+        document.getElementById("results").classList.remove("hidden");
+        document.getElementById("results").innerHTML = `
+            <p>SVM: ${result.SVM}</p>
+            <p>Naive Bayes: ${result.Naive_Bayes}</p>
+            <p>Logistic Regression: ${result.Logistic_Regression}</p>
+        `;
+    }
+</script>
+</body>
+</html>
