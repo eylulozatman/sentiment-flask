@@ -16,17 +16,15 @@ nltk.download('punkt')
 
 DATA_PATH = "set/combined_dataset.csv"
 
-# Veri Yükleme
 def load_data(file_path):
     df = pd.read_csv(file_path, quotechar='"', encoding='utf-8')
     df.fillna("", inplace=True)
     return df
 
-# Metin Temizleme
 def clean_text(text):
     text = text.lower()
-    text = re.sub(r'http\S+|www\.\S+', '', text)  # URL'leri kaldır
-    text = re.sub(r'[^a-zA-Z\s]', '', text)       # Noktalama işaretleri ve sayıları kaldır
+    text = re.sub(r'http\S+|www\.\S+', '', text)
+    text = re.sub(r'[^a-zA-Z\s]', '', text)     
 
     stop_words = set(stopwords.words('english'))
     important_words = {'not', 'wasn', 'isn', 'couldn', 'wouldn', 'won', 'don'}
@@ -35,14 +33,13 @@ def clean_text(text):
     text = ' '.join([word for word in text.split() if word not in stop_words])
     return text
 
-# Vektörleştirme
+
 def vectorize_text(train_texts, test_texts):
     vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
     X_train = vectorizer.fit_transform(train_texts)
     X_test = vectorizer.transform(test_texts)
     return X_train, X_test, vectorizer
 
-# Ana Fonksiyon
 def main():
     df = load_data(DATA_PATH)
     df['clean_text'] = df['text'].apply(clean_text)
